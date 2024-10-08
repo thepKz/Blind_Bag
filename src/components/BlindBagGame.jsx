@@ -84,7 +84,8 @@ const BlindBagGame = ({ onGameEnd }) => {
   const [currentRoundBags, setCurrentRoundBags] = useState([]);
   const [showRules, setShowRules] = useState(true);
   const [roundCount, setRoundCount] = useState(0); // New state for round count
-  const [setReceivedBags] = useState([]); // New state for receivedBags
+  // eslint-disable-next-line
+  const [receivedBags, setReceivedBags] = useState([]); // New state for receivedBags
   const bagGridRef = useRef(null);
 
   useEffect(() => {
