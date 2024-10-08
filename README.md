@@ -1,70 +1,60 @@
-# Getting Started with Create React App
+# Trò Chơi Túi Mù
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+Trò Chơi Túi Mù là một ứng dụng web đơn giản được xây dựng bằng React, nơi người chơi có thể chọn số lượng túi mù và màu nguyện vọng. Mục tiêu là thu thập các túi mù thông qua các lượt chơi, với cơ hội nhận thêm túi khi có cặp màu hoặc trùng màu nguyện vọng.
 
-## Available Scripts
+## Cách Chơi
 
-In the project directory, you can run:
+1. **Chọn Số Túi Mù và Màu Nguyện Vọng:**
+   - Người chơi chọn số lượng túi mù muốn mua và màu nguyện vọng từ danh sách có sẵn.
 
-### `npm start`
+2. **Bắt Đầu Trò Chơi:**
+   - Nhấn nút "Bắt đầu chơi" để bắt đầu bốc túi mù.
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+3. **Luật Chơi:**
+   - Mỗi lượt, số túi mù đã chọn sẽ được bốc ngẫu nhiên.
+   - Nếu có 2 túi cùng màu, người chơi sẽ được tặng 1 túi mù.
+   - Nếu túi trùng với màu nguyện vọng, người chơi cũng sẽ được tặng 1 túi mù.
+   - Những túi được tặng sẽ tiếp tục được bốc lại trong lượt tiếp theo.
+   - Trò chơi kết thúc khi không còn túi mù trùng màu hoặc nguyện vọng, hoặc đạt tối đa 20 lượt.
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+4. **Xem Kết Quả:**
+   - Sau khi trò chơi kết thúc, người chơi có thể xem chi tiết các lượt và tổng kết số túi nhận được.
 
-### `npm test`
+## Cài Đặt
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+1. **Clone Repository:**
+   ```bash
+   git clone <repository-url>
+   cd blind-bag
+   ```
 
-### `npm run build`
+2. **Cài Đặt Dependencies:**
+   ```bash
+   npm install
+   ```
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+3. **Chạy Ứng Dụng:**
+   ```bash
+   npm start
+   ```
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+4. **Mở Trình Duyệt:**
+   - Truy cập [http://localhost:3000](http://localhost:3000) để xem ứng dụng.
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+## Công Nghệ Sử Dụng
 
-### `npm run eject`
+- **React**: Thư viện JavaScript để xây dựng giao diện người dùng.
+- **Tailwind CSS**: Framework CSS để tạo kiểu cho ứng dụng.
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+## Ghi Chú
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+- Ứng dụng này được xây dựng với mục đích học tập và giải trí.
+- Đảm bảo rằng bạn đã cài đặt Node.js và npm trước khi bắt đầu.
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+## Đóng Góp
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+Nếu bạn muốn đóng góp cho dự án, vui lòng tạo một pull request hoặc mở một issue để thảo luận.
 
-## Learn More
+---
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+Hy vọng bạn thích trò chơi này!
