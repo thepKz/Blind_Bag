@@ -1,19 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 
-const Container = styled.div`
-  background: linear-gradient(45deg, #ff9a9e, #fad0c4, #ffecd2);
-  border-radius: 15px;
-  padding: 50px;
-  max-width: 600px;
-  margin: 100px auto;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-  animation: appear 0.8s ease-out;
-  @keyframes appear {
-    from { opacity: 0; transform: scale(0.9); }
-    to { opacity: 1; transform: scale(1); }
-  }
-`;
+
 
 const Title = styled.h2`
   color: #333;
@@ -63,7 +51,7 @@ const StartButton = styled.button`
 
 const GameRulesSection = ({ onStart }) => {
   return (
-    <Container>
+    <div>
       <Title>Trò Chơi Túi Mù</Title>
       <RulesList>
         <RuleItem>Bạn chọn số túi mù sẽ mua và màu nguyện vọng.</RuleItem>
@@ -74,7 +62,7 @@ const GameRulesSection = ({ onStart }) => {
         <RuleItem>Trò chơi kết thúc khi không còn túi mù trúng màu hoặc nguyện vọng, hoặc đạt tối đa 20 lượt.</RuleItem>
       </RulesList>
       <StartButton onClick={onStart}>Đã Hiểu</StartButton>
-    </Container>
+    </div>
   );
 };
 
