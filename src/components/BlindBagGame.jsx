@@ -20,38 +20,34 @@ const GameContainer = styled.div`
   min-height: 100vh;
   overflow-y: auto;
   animation: ${fadeIn} 1s ease-out;
-
-  @media (min-width: 768px) {
-    width: 100%;
-  }
 `;
 
 const ContentWrapper = styled.div`
   background: rgba(255, 255, 255, 0.8);
   border-radius: 20px;
-  padding: 15px;
+  padding: 5px;
   max-width: 1200px;
-  width: 100%;
+  width: 95%;
   margin: 0 auto;
-
-  @media (max-width: 768px) {
-    padding: 10px;
-    width: 95%;
-  }
 `;
 
 const BagGrid = styled(motion.div)`
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
-  gap: 10px;
-  margin-top: 20px;
+  grid-template-columns: repeat(auto-fill, minmax(60px, 1fr));
+  gap: 5px;
+  margin-top: 10px;
   max-height: 40vh;
   overflow-y: auto;
   padding-right: 5px;
 
-  @media (max-width: 768px) {
+  @media (min-width: 480px) {
     grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
     gap: 8px;
+  }
+
+  @media (min-width: 768px) {
+    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+    gap: 10px;
   }
 
   &::-webkit-scrollbar {
@@ -76,8 +72,8 @@ const BagGrid = styled(motion.div)`
 const BagItem = styled(motion.div)`
   background-color: white;
   border-radius: 10px;
-  padding: 10px;
-  border: 3px solid ${(props) => props.color};
+  padding: 5px;
+  border: 2px solid ${(props) => props.color};
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -86,45 +82,45 @@ const BagItem = styled(motion.div)`
   ${(props) =>
     props.isMatched &&
     css`
-      border: 3px solid ${props.matchColor};
+      border: 2px solid ${props.matchColor};
       animation: pulse 1s infinite;
     `}
 
   ${(props) =>
     props.isDesiredColor &&
     css`
-      border: 3px solid blue;
+      border: 2px solid blue;
       animation: pulseBlue 1s infinite;
     `}
 
   @keyframes pulse {
     0% {
-      box-shadow: 0 0 5px ${(props) => props.matchColor};
+      box-shadow: 0 0 3px ${(props) => props.matchColor};
     }
     50% {
-      box-shadow: 0 0 15px ${(props) => props.matchColor};
+      box-shadow: 0 0 10px ${(props) => props.matchColor};
     }
     100% {
-      box-shadow: 0 0 5px ${(props) => props.matchColor};
+      box-shadow: 0 0 3px ${(props) => props.matchColor};
     }
   }
 
   @keyframes pulseBlue {
     0% {
-      box-shadow: 0 0 5px blue;
+      box-shadow: 0 0 3px blue;
     }
     50% {
-      box-shadow: 0 0 15px blue;
+      box-shadow: 0 0 10px blue;
     }
     100% {
-      box-shadow: 0 0 5px blue;
+      box-shadow: 0 0 3px blue;
     }
   }
 `;
 
 const BagImage = styled.img`
   width: 100%;
-  height: 80px;
+  height: 60px;
   object-fit: cover;
   border-radius: 5px;
   transition: transform 0.3s ease;
@@ -132,19 +128,27 @@ const BagImage = styled.img`
   &:hover {
     transform: scale(1.05);
   }
+
+  @media (min-width: 480px) {
+    height: 80px;
+  }
+
+  @media (min-width: 768px) {
+    height: 100px;
+  }
 `;
 
 const PlayButton = styled.button`
   background: linear-gradient(45deg, #ff6b6b, #feca57);
   color: white;
-  font-size: 16px;
+  font-size: 14px;
   font-weight: bold;
-  padding: 10px 20px;
+  padding: 8px 16px;
   border: none;
   border-radius: 50px;
   cursor: pointer;
   transition: all 0.3s ease;
-  margin-top: 20px;
+  margin-top: 15px;
 
   &:hover {
     transform: translateY(-3px);
@@ -157,21 +161,27 @@ const PlayButton = styled.button`
     background: #cccccc;
     cursor: not-allowed;
   }
+
+  @media (min-width: 480px) {
+    font-size: 16px;
+    padding: 10px 20px;
+    margin-top: 20px;
+  }
 `;
 
 const UnmatchedSection = styled.div`
-  margin-top: 20px;
-  padding: 15px;
+  margin-top: 15px;
+  padding: 10px;
   background: #f8f9fa;
   border-radius: 10px;
 `;
 
 const TimerBar = styled.div`
   width: 100%;
-  height: 8px;
+  height: 6px;
   background-color: #e0e0e0;
   border-radius: 5px;
-  margin-top: 10px;
+  margin-top: 8px;
   overflow: hidden;
 `;
 
@@ -183,10 +193,18 @@ const TimerProgress = styled.div`
 `;
 
 const MatchedInfo = styled.div`
-  margin-top: 10px;
-  font-size: 18px;
+  margin-top: 8px;
+  font-size: 14px;
   font-weight: bold;
   color: #ff6b6b;
+
+  @media (min-width: 480px) {
+    font-size: 16px;
+  }
+
+  @media (min-width: 768px) {
+    font-size: 18px;
+  }
 `;
 
 // Component chính của trò chơi Blind Bag

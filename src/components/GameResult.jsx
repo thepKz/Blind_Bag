@@ -10,25 +10,25 @@ const fadeIn = keyframes`
 
 const ResultContainer = styled(motion.div)`
   background: linear-gradient(135deg, #ffd3e3 0%, #fff0c1 100%);
-  padding: 1rem;
+  padding: 0.5rem;
   border-radius: 20px;
   box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
   width: 100%;
   min-height: 100vh;
   animation: ${fadeIn} 1s ease-out;
-  
-  @media (min-width: 768px) {
-    width: 100%;
-  }
 `;
 
 const Title = styled.h2`
-  font-size: 1.5rem;
+  font-size: 1.2rem;
   color: #ff7675;
   text-align: center;
-  margin-bottom: 2rem;
+  margin-bottom: 1rem;
   font-family: 'Arial', sans-serif;
   letter-spacing: 1px;
+
+  @media (min-width: 480px) {
+    font-size: 1.5rem;
+  }
 
   @media (min-width: 768px) {
     font-size: 2rem;
@@ -37,18 +37,26 @@ const Title = styled.h2`
 
 const CongratsTitle = styled(Title)`
   color: #ff7675;
-  font-size: 1.5rem;
-  margin-top: 0.7rem;
+  font-size: 1.2rem;
+  margin-top: 0.5rem;
+
+  @media (min-width: 480px) {
+    font-size: 1.5rem;
+  }
 `;
 
 const InfoText = styled.p`
-  font-size: 1.2rem;
+  font-size: 1rem;
   color: #444;
-  margin-bottom: 1rem;
+  margin-bottom: 0.5rem;
   text-align: center;
   text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
   font-family: 'Verdana', sans-serif;
-  line-height: 1.5;
+  line-height: 1.2;
+
+  @media (min-width: 480px) {
+    font-size: 1.2rem;
+  }
 
   @media (min-width: 768px) {
     font-size: 1.5rem;
@@ -57,9 +65,13 @@ const InfoText = styled.p`
 
 const BagGrid = styled.div`
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
-  gap: 1.5rem;
-  margin-top: 1rem;
+  grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+
+  @media (min-width: 480px) {
+    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+  }
 
   @media (min-width: 768px) {
     grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
@@ -81,10 +93,14 @@ const BagItem = styled(motion.div)`
 
 const BagImage = styled.img`
   width: 100%;
-  height: 120px;
+  height: 100px;
   object-fit: cover;
   border-radius: 10px;
   margin-bottom: 0.5rem;
+
+  @media (min-width: 480px) {
+    height: 120px;
+  }
 
   @media (min-width: 768px) {
     height: 160px;
@@ -94,15 +110,15 @@ const BagImage = styled.img`
 const PlayAgainButton = styled(motion.button)`
   background: linear-gradient(45deg, #ff7675, #f7d794);
   color: white;
-  font-size: 1.2rem;
+  font-size: 1rem;
   font-weight: bold;
-  padding: 1rem 2rem;
+  padding: 0.8rem 1.5rem;
   border: none;
   border-radius: 30px;
   cursor: pointer;
   transition: all 0.3s ease;
   display: block;
-  margin: 2rem auto 0;
+  margin: 1.5rem auto 0;
   box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
 
   &:hover {
@@ -110,6 +126,12 @@ const PlayAgainButton = styled(motion.button)`
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
     background: linear-gradient(45deg, #ff9f9f, #ffeaa7);
     filter: brightness(1.1);
+  }
+
+  @media (min-width: 480px) {
+    font-size: 1.2rem;
+    padding: 1rem 2rem;
+    margin: 2rem auto 0;
   }
 `;
 
@@ -128,7 +150,8 @@ const GameResult = ({ result, onPlayAgain }) => {
     }
   }, []);
 
-  const totalReceivedBags = (result.receivedBags?.length || 0) + (result.unmatchedBags?.length || 0);
+  const totalReceivedBags =
+    (result.receivedBags?.length || 0) + (result.unmatchedBags?.length || 0);
   const allBags = [...(result.receivedBags || []), ...(result.unmatchedBags || [])];
 
   return (
@@ -142,9 +165,16 @@ const GameResult = ({ result, onPlayAgain }) => {
       <InfoText>
         Màu nguyện vọng: <span style={{ color: result.desiredColor }}>{result.desiredColor}</span>
       </InfoText>
-      <InfoText>
-        Tổng số túi nhận được: {totalReceivedBags}
-      </InfoText>
+        
+      <InfoText>Tổng số túi nhận được: {totalReceivedBags}</InfoText>
+
+      <PlayAgainButton
+        onClick={onPlayAgain}
+        whileHover={{ scale: 1.05 }}
+        whileTap={{ scale: 0.95 }}
+      >
+        Chơi lại
+      </PlayAgainButton>
 
       <AnimatePresence>
         {showConfetti && (
@@ -161,7 +191,7 @@ const GameResult = ({ result, onPlayAgain }) => {
 
       {allBags.length > 0 && (
         <>
-          <InfoText style={{ fontWeight: 'bold', marginTop: '1rem' }}>Tất cả các túi:</InfoText>
+          <InfoText style={{ fontWeight: 'bold', marginTop: '0.5rem' }}>Tất cả các túi:</InfoText>
           <BagGrid>
             {allBags.map((bag, index) => (
               <BagItem
@@ -178,20 +208,15 @@ const GameResult = ({ result, onPlayAgain }) => {
                     e.target.src = 'path/to/fallback/image.png';
                   }}
                 />
-                <p style={{ color: bag.color, fontWeight: 'bold' }}>{bag.color}</p>
+                <p style={{ color: bag.color, fontWeight: 'bold', fontSize: '0.9rem' }}>
+                  {bag.color}
+                </p>
               </BagItem>
             ))}
           </BagGrid>
         </>
       )}
 
-      <PlayAgainButton
-        onClick={onPlayAgain}
-        whileHover={{ scale: 1.05 }}
-        whileTap={{ scale: 0.95 }}
-      >
-        Chơi lại
-      </PlayAgainButton>
     </ResultContainer>
   );
 };
