@@ -58,8 +58,8 @@ const GameRulesSection = ({ onStart }) => {
         <RuleItem>Hệ thống sẽ bốc ngẫu nhiên số túi mù như bạn đã chọn.</RuleItem>
         <RuleItem>Nếu có 2 túi cùng màu, bạn sẽ được tặng 1 túi mù.</RuleItem>
         <RuleItem>Nếu túi trúng với màu nguyện vọng, bạn cũng sẽ được tặng 1 túi mù.</RuleItem>
-        <RuleItem>Những túi được tặng thêm sẽ tiếp tục bốc lại (2 lượt tiếp theo) và kiểm tra có trúng cặp hoặc trúng màu với màu còn lại.</RuleItem>
-        <RuleItem>Trò chơi kết thúc khi không còn túi mù trúng màu hoặc nguyện vọng, hoặc đạt tối đa 20 lượt.</RuleItem>
+        <RuleItem>Những túi được tặng thêm sẽ tiếp tục bốc lại ở lượt sau và kiểm tra xem có trúng cặp và màu nguyện vọng hay không (Lấy cả túi lượt trước chưa được bắt cặp).</RuleItem>
+        <RuleItem>Trò chơi kết thúc khi không còn túi mù trúng màu hoặc nguyện vọng, hoặc đạt tối đa 20 lượt (Set hạn chế để fix lỗi).</RuleItem>
       </RulesList>
       <StartButton onClick={onStart}>Đã Hiểu</StartButton>
     </div>

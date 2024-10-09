@@ -1,7 +1,9 @@
+/* eslint-disable no-unused-vars */
 // Import các thư viện và component cần thiết
 import { AnimatePresence, motion } from 'framer-motion';
 import React, { useEffect, useRef, useState } from 'react';
-import styled, { keyframes } from 'styled-components';
+import Confetti from 'react-confetti';
+import styled, { css, keyframes } from 'styled-components';
 import { COLORS, COLOR_IMAGES } from '../constants';
 import BagSelector from './BagSelector';
 import GameRulesModal from './GameRulesModal';
@@ -10,15 +12,15 @@ const fadeIn = keyframes`
   from { opacity: 0; }
   to { opacity: 1; }
 `;
+
 // Định nghĩa các styled components cho giao diện trò chơi
 const GameContainer = styled.div`
   background: linear-gradient(135deg, #ffd3e3 0%, #fff0c1 100%);
-  border-radius: 20px;
-  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
-  width: 1500px;
+  width: 100%;
   min-height: 100vh;
+  overflow-y: auto;
   animation: ${fadeIn} 1s ease-out;
-  
+
   @media (min-width: 768px) {
     width: 100%;
   }
@@ -28,35 +30,32 @@ const ContentWrapper = styled.div`
   background: rgba(255, 255, 255, 0.8);
   border-radius: 20px;
   padding: 15px;
-  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
-  backdrop-filter: blur(4px);
-  border: 1px solid rgba(255, 255, 255, 0.18);
   max-width: 1200px;
   width: 100%;
   margin: 0 auto;
 
   @media (max-width: 768px) {
-    padding: 20px;
+    padding: 10px;
     width: 95%;
   }
 `;
 
 const BagGrid = styled(motion.div)`
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-  gap: 20px;
+  grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+  gap: 10px;
   margin-top: 20px;
-  max-height: 50vh;
+  max-height: 40vh;
   overflow-y: auto;
-  padding-right: 10px;
+  padding-right: 5px;
 
   @media (max-width: 768px) {
-    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
-    gap: 15px;
+    grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+    gap: 8px;
   }
 
   &::-webkit-scrollbar {
-    width: 8px;
+    width: 6px;
   }
 
   &::-webkit-scrollbar-track {
@@ -76,47 +75,71 @@ const BagGrid = styled(motion.div)`
 
 const BagItem = styled(motion.div)`
   background-color: white;
-  border-radius: 15px;
-  padding: 15px;
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-  transition: all 0.3s ease;
-  border: 3px solid ${props => props.color};
+  border-radius: 10px;
+  padding: 10px;
+  border: 3px solid ${(props) => props.color};
   display: flex;
   flex-direction: column;
   align-items: center;
+  position: relative;
 
-  &:hover {
-    transform: translateY(-5px) scale(1.05);
-    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+  ${(props) =>
+    props.isMatched &&
+    css`
+      border: 3px solid ${props.matchColor};
+      animation: pulse 1s infinite;
+    `}
+
+  ${(props) =>
+    props.isDesiredColor &&
+    css`
+      border: 3px solid blue;
+      animation: pulseBlue 1s infinite;
+    `}
+
+  @keyframes pulse {
+    0% {
+      box-shadow: 0 0 5px ${(props) => props.matchColor};
+    }
+    50% {
+      box-shadow: 0 0 15px ${(props) => props.matchColor};
+    }
+    100% {
+      box-shadow: 0 0 5px ${(props) => props.matchColor};
+    }
   }
 
-  @media (max-width: 768px) {
-    padding: 10px;
+  @keyframes pulseBlue {
+    0% {
+      box-shadow: 0 0 5px blue;
+    }
+    50% {
+      box-shadow: 0 0 15px blue;
+    }
+    100% {
+      box-shadow: 0 0 5px blue;
+    }
   }
 `;
 
 const BagImage = styled.img`
   width: 100%;
-  height: 120px;
+  height: 80px;
   object-fit: cover;
-  border-radius: 10px;
+  border-radius: 5px;
   transition: transform 0.3s ease;
 
   &:hover {
-    transform: scale(1.1);
-  }
-
-  @media (max-width: 768px) {
-    height: 100px;
+    transform: scale(1.05);
   }
 `;
 
 const PlayButton = styled.button`
   background: linear-gradient(45deg, #ff6b6b, #feca57);
   color: white;
-  font-size: 18px;
+  font-size: 16px;
   font-weight: bold;
-  padding: 12px 24px;
+  padding: 10px 20px;
   border: none;
   border-radius: 50px;
   cursor: pointer;
@@ -125,7 +148,8 @@ const PlayButton = styled.button`
 
   &:hover {
     transform: translateY(-3px);
-    box-shadow: 0 7px 14px rgba(50, 50, 93, 0.1), 0 3px 6px rgba(0, 0, 0, 0.08);
+    box-shadow: 0 5px 15px rgba(50, 50, 93, 0.1),
+      0 2px 4px rgba(0, 0, 0, 0.08);
     background: linear-gradient(45deg, #ff8787, #ffd783);
   }
 
@@ -133,16 +157,40 @@ const PlayButton = styled.button`
     background: #cccccc;
     cursor: not-allowed;
   }
+`;
 
-  @media (max-width: 768px) {
-    font-size: 16px;
-    padding: 10px 20px;
-  }
+const UnmatchedSection = styled.div`
+  margin-top: 20px;
+  padding: 15px;
+  background: #f8f9fa;
+  border-radius: 10px;
+`;
+
+const TimerBar = styled.div`
+  width: 100%;
+  height: 8px;
+  background-color: #e0e0e0;
+  border-radius: 5px;
+  margin-top: 10px;
+  overflow: hidden;
+`;
+
+const TimerProgress = styled.div`
+  height: 100%;
+  background-color: #4caf50;
+  width: ${(props) => props.progress}%;
+  transition: width 0.1s linear;
+`;
+
+const MatchedInfo = styled.div`
+  margin-top: 10px;
+  font-size: 18px;
+  font-weight: bold;
+  color: #ff6b6b;
 `;
 
 // Component chính của trò chơi Blind Bag
 const BlindBagGame = ({ onGameEnd }) => {
-  // Khai báo các state cần thiết cho trò chơi
   const [bagCount, setBagCount] = useState(10);
   const [desiredColor, setDesiredColor] = useState(COLORS[0].name);
   const [isPlaying, setIsPlaying] = useState(false);
@@ -150,132 +198,219 @@ const BlindBagGame = ({ onGameEnd }) => {
   const [showRules, setShowRules] = useState(true);
   const [roundCount, setRoundCount] = useState(0);
   const [receivedBags, setReceivedBags] = useState([]);
+  const [unmatchedBags, setUnmatchedBags] = useState([]);
+  const [matchedBags, setMatchedBags] = useState([]);
+  const [desiredColorMatchedBags, setDesiredColorMatchedBags] = useState([]);
+  const [matchedPairsCount, setMatchedPairsCount] = useState(0);
+  const [desiredColorCount, setDesiredColorCount] = useState(0);
+  const [showConfetti, setShowConfetti] = useState(false);
+  const [timerProgress, setTimerProgress] = useState(100);
   const bagGridRef = useRef(null);
 
-  // Effect để cuộn xuống cuối danh sách túi khi có túi mới
+  const [matchColors, setMatchColors] = useState({});
+  let nextUnmatchedBags = [];
+
   useEffect(() => {
     if (bagGridRef.current) {
       bagGridRef.current.scrollTo({
         top: bagGridRef.current.scrollHeight,
-        behavior: 'smooth'
+        behavior: 'smooth',
       });
     }
   }, [currentRoundBags]);
 
-  // Hàm tạo độ trễ
-  const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+  const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
-  // Hàm chính để chơi trò chơi
+  // Hàm trợ giúp tìm các túi ghép cặp
+  const findMatchesInBags = (bags) => {
+    const matched = [];
+    const colorGroups = {};
+
+    bags.forEach((bag) => {
+      if (bag.color !== desiredColor) {
+        if (!colorGroups[bag.color]) {
+          colorGroups[bag.color] = [];
+        }
+        colorGroups[bag.color].push(bag);
+      }
+    });
+
+    Object.keys(colorGroups).forEach((color) => {
+      const bagsOfColor = colorGroups[color];
+      const pairs = Math.floor(bagsOfColor.length / 2);
+      if (pairs > 0) {
+        matched.push(...bagsOfColor.slice(0, pairs * 2));
+      }
+    });
+
+    return matched;
+  };
+
   const playGame = async () => {
     setIsPlaying(true);
     setCurrentRoundBags([]);
+    setReceivedBags([]);
+    setUnmatchedBags([]);
+    setMatchedBags([]);
+    setDesiredColorMatchedBags([]);
+    setMatchedPairsCount(0);
+    setDesiredColorCount(0);
+    setMatchColors({});
     let totalBags = bagCount;
-    let rounds = [];
     let allReceivedBags = [];
-    setRoundCount(0);
-    
+    let currentUnmatchedBags = [];
+    nextUnmatchedBags = [];
+
     while (totalBags > 0) {
+      // Cập nhật unmatchedBags ở đầu mỗi lượt
+      setUnmatchedBags(currentUnmatchedBags);
+
       const currentRound = roundCount + 1;
-      await delay(2500);
-      setRoundCount(currentRound);
+      setRoundCount((prevCount) => prevCount + 1);
       setCurrentRoundBags([]);
-  
-      // Tạo các túi mới cho lượt hiện tại
+      setMatchedPairsCount(0);
+      setDesiredColorCount(0);
+      setShowConfetti(false);
+      setMatchColors({});
+
+      // Bốc túi mới cho lượt hiện tại
       const newBags = Array.from({ length: totalBags }, () => {
-        const color = COLORS[Math.floor(Math.random() * COLORS.length)].name;
+        const color =
+          COLORS[Math.floor(Math.random() * COLORS.length)].name;
         const images = COLOR_IMAGES[color];
         const image = images[Math.floor(Math.random() * images.length)];
         return { color, image };
       });
-  
-      allReceivedBags = [...allReceivedBags, ...newBags];
+
+      // Hiển thị từng túi mới với độ trễ và thanh thời gian
+      for (let i = 0; i < newBags.length; i++) {
+        setTimerProgress(100);
+        const startTime = Date.now();
+        const duration = 800;
+
+        while (Date.now() - startTime < duration) {
+          const elapsed = Date.now() - startTime;
+          const progress = 100 - (elapsed / duration) * 100;
+          setTimerProgress(progress);
+          await delay(50);
+        }
+
+        setCurrentRoundBags((prev) => [...prev, newBags[i]]);
+        await delay(100);
+      }
+
+      // Tìm túi trùng màu nguyện vọng trong túi mới
+      const desiredColorBagsThisRound = newBags.filter(
+        (bag) => bag.color === desiredColor
+      );
+
+      // Thêm hiệu ứng cho các túi trùng màu nguyện vọng
+      setDesiredColorMatchedBags((prev) => [
+        ...prev,
+        ...desiredColorBagsThisRound,
+      ]);
+      setDesiredColorCount(desiredColorBagsThisRound.length);
+
+      // Chờ để hiển thị hiệu ứng
+      await delay(100);
+
+      // Loại bỏ túi trùng màu nguyện vọng khỏi quá trình ghép cặp
+      const nonDesiredColorNewBags = newBags.filter(
+        (bag) => bag.color !== desiredColor
+      );
+
+      // Kết hợp túi chưa ghép từ lượt trước và túi mới (không bao gồm màu nguyện vọng)
+      const combinedBags = [...currentUnmatchedBags, ...nonDesiredColorNewBags];
+
+      // Tìm các cặp ghép trong combinedBags
+      const matchedBagsThisRound = findMatchesInBags(combinedBags);
+
+      // Gán màu sắc cho các cặp ghép để phân biệt
+      const uniqueColors = ['gold', 'purple', 'green', 'orange', 'red'];
+      let colorIndex = 0;
+      const newMatchColors = {};
+
+      for (let i = 0; i < matchedBagsThisRound.length; i += 2) {
+        const matchColor = uniqueColors[colorIndex % uniqueColors.length];
+        newMatchColors[matchedBagsThisRound[i]] = matchColor;
+        newMatchColors[matchedBagsThisRound[i + 1]] = matchColor;
+        colorIndex++;
+      }
+
+      setMatchColors((prev) => ({ ...prev, ...newMatchColors }));
+
+      // Cập nhật số cặp đã ghép
+      const totalMatchedPairs = matchedBagsThisRound.length / 2;
+      setMatchedPairsCount(totalMatchedPairs);
+
+      // Hiển thị pháo hoa nếu có cặp ghép
+      if (totalMatchedPairs > 0) {
+        setShowConfetti(true);
+      }
+
+      // Chờ để hiển thị hiệu ứng
+      await delay(1000);
+
+      // Loại bỏ các túi đã ghép khỏi combinedBags để tạo nextUnmatchedBags
+      const matchedBagSet = new Set(matchedBagsThisRound);
+      nextUnmatchedBags = combinedBags.filter(
+        (bag) => !matchedBagSet.has(bag)
+      );
+
+      // Cập nhật các túi đã ghép
+      setMatchedBags((prev) => [...prev, ...matchedBagsThisRound]);
+
+      // Cập nhật các túi nhận được
+      allReceivedBags = [
+        ...allReceivedBags,
+        ...matchedBagsThisRound,
+        ...desiredColorBagsThisRound,
+      ];
       setReceivedBags(allReceivedBags);
 
-      // Hiển thị từng túi một
-      for (let i = 0; i < newBags.length; i++) {
-        setCurrentRoundBags(prev => [...prev, newBags[i]]);
-        await delay(150); // Đợi 0.15 giây cho mỗi túi
+      // Tính toán số túi được tặng thêm cho lượt tiếp theo
+      const numberOfPairs = totalMatchedPairs;
+      const numberOfDesiredColorBags = desiredColorBagsThisRound.length;
+
+      const totalBonusBags = numberOfPairs + numberOfDesiredColorBags;
+
+      if (totalBonusBags === 0) {
+        break;
       }
 
-      // Đếm số lượng túi cho mỗi màu
-      const colorCounts = newBags.reduce((counts, bag) => {
-        counts[bag.color] = (counts[bag.color] || 0) + 1;
-        return counts;
-      }, {});
+      totalBags = totalBonusBags;
+      currentUnmatchedBags = nextUnmatchedBags;
 
-      const matchedBags = [];
-      const unmatchedBags = [];
-      const pairedColors = [];
-      const bonusBags = [];
-
-      // Xử lý các cặp túi và túi thưởng
-      Object.entries(colorCounts).forEach(([color, count]) => {
-        const pairs = Math.floor(count / 2);
-        if (pairs > 0) {
-          for (let i = 0; i < pairs; i++) {
-            matchedBags.push(color, color);
-            bonusBags.push(color);
-            pairedColors.push(color);
-          }
-        }
-        const remainingCount = count % 2;
-        for (let i = 0; i < remainingCount; i++) {
-          unmatchedBags.push(color);
-        }
-      });
-
-      // Xử lý túi trùng màu nguyện vọng
-      const desiredColorCount = newBags.filter(bag => bag.color === desiredColor).length;
-      for (let i = 0; i < desiredColorCount; i++) {
-        bonusBags.push(desiredColor);
-      }
-
-      // Tạo tổng kết cho lượt hiện tại
-      const roundSummary = {
-        pairedCount: pairedColors.length,
-        desiredColorCount,
-        bonusBagsCount: bonusBags.length
-      };
-
-      // Hiển thị tổng kết lượt
-      setCurrentRoundBags(prev => [...prev, roundSummary]);
-      await delay(2500); // Đợi 2.5 giây để hiển thị tổng kết
-
-      // Lưu thông tin lượt chơi
-      rounds.push({
-        totalBags,
-        newBags,
-        matchedBags,
-        unmatchedBags,
-        bonusBags,
-        pairedColors,
-        desiredColorCount
-      });
-
-      totalBags = bonusBags.length;
-
-      // Kết thúc trò chơi nếu không còn túi thưởng
-      if (bonusBags.length === 0) break;
+      await delay(5000);
     }
 
-    // Kết thúc trò chơi và gửi kết quả
+    // Cập nhật unmatchedBags lần cuối
+    setUnmatchedBags(currentUnmatchedBags);
+
+    // Kết thúc trò chơi
     setIsPlaying(false);
     onGameEnd({
       initialBags: bagCount,
       desiredColor: desiredColor,
-      rounds: rounds,
       receivedBags: allReceivedBags,
+      unmatchedBags: currentUnmatchedBags,
     });
   };
 
-  // Hàm xử lý khi bắt đầu trò chơi
   const handleStartGame = () => {
     setShowRules(false);
     setCurrentRoundBags([]);
     setRoundCount(0);
+    setReceivedBags([]);
+    setUnmatchedBags([]);
+    setMatchedBags([]);
+    setDesiredColorMatchedBags([]);
+    setMatchedPairsCount(0);
+    setDesiredColorCount(0);
+    setShowConfetti(false);
+    setMatchColors({});
   };
 
-  // Render giao diện trò chơi
   return (
     <GameContainer>
       <ContentWrapper>
@@ -290,46 +425,68 @@ const BlindBagGame = ({ onGameEnd }) => {
               onDesiredColorChange={setDesiredColor}
               colors={COLORS}
             />
-            <PlayButton
-              onClick={playGame}
-              disabled={isPlaying}
-            >
+            <PlayButton onClick={playGame} disabled={isPlaying}>
               {isPlaying ? 'Đang chơi...' : 'Bắt đầu chơi'}
             </PlayButton>
-            {isPlaying && <h2 className="text-2xl font-bold mt-4">Lượt: {roundCount}</h2>}
+            {isPlaying && (
+              <>
+                <h2 className="text-2xl font-bold mt-4">Lượt: {roundCount}</h2>
+                <TimerBar>
+                  <TimerProgress progress={timerProgress} />
+                </TimerBar>
+                <MatchedInfo>
+                  Bạn nhận được {desiredColorCount} túi màu nguyện vọng!
+                </MatchedInfo>
+                <MatchedInfo>
+                  Bạn đã ghép được {matchedPairsCount} cặp!
+                </MatchedInfo>
+              </>
+            )}
+
+            {showConfetti && <Confetti />}
+
             <BagGrid ref={bagGridRef}>
               <AnimatePresence>
                 {currentRoundBags.map((bag, index) => (
-                  bag.pairedCount !== undefined ? (
-                    <motion.div
-                      key="summary"
-                      className="col-span-full text-center mt-4"
-                      initial={{ opacity: 0, y: 50 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0, y: -50 }}
-                      transition={{ duration: 0.5 }}
-                    >
-                      <h3 className="text-xl font-bold">Kết quả lượt {roundCount}</h3>
-                      <p>Số cặp: {bag.pairedCount}</p>
-                      <p>Số túi trùng màu nguyện vọng: {bag.desiredColorCount}</p>
-                      <p>Tổng số túi được tặng: {bag.bonusBagsCount}</p>
-                    </motion.div>
-                  ) : (
-                    <BagItem
-                      key={`${bag.color}-${index}`}
-                      color={bag.color}
-                      initial={{ opacity: 0, scale: 0.8 }}
-                      animate={{ opacity: 1, scale: 1 }}
-                      exit={{ opacity: 0, scale: 0.8 }}
-                      transition={{ duration: 0.3 }}
-                    >
-                      <BagImage src={bag.image} alt={bag.color} />
-                      <p className="text-center mt-2 font-semibold">{bag.color}</p>
-                    </BagItem>
-                  )
+                  <BagItem
+                    key={`${bag.color}-${index}`}
+                    color={bag.color}
+                    isMatched={matchedBags.includes(bag)}
+                    isDesiredColor={desiredColorMatchedBags.includes(bag)}
+                    matchColor={matchColors[bag]}
+                    initial={{ opacity: 0, scale: 0.8 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    exit={{ opacity: 0, scale: 0.8 }}
+                    transition={{ duration: 0.3 }}
+                  >
+                    <BagImage src={bag.image} alt={bag.color} />
+                    <p className="text-center mt-2 font-semibold">{bag.color}</p>
+                  </BagItem>
                 ))}
               </AnimatePresence>
             </BagGrid>
+
+            {unmatchedBags.length > 0 && (
+              <UnmatchedSection>
+                <h3 className="text-xl font-bold">Túi chưa được ghép cặp</h3>
+                <BagGrid>
+                  {unmatchedBags.map((bag, index) => (
+                    <BagItem
+                      key={`${bag.color}-unmatched-${index}`}
+                      color={bag.color}
+                      isMatched={matchedBags.includes(bag)}
+                      isDesiredColor={bag.color === desiredColor}
+                      matchColor={matchColors[bag]}
+                    >
+                      <BagImage src={bag.image} alt={bag.color} />
+                      <p className="text-center mt-2 font-semibold">
+                        {bag.color}
+                      </p>
+                    </BagItem>
+                  ))}
+                </BagGrid>
+              </UnmatchedSection>
+            )}
           </>
         )}
       </ContentWrapper>

@@ -8,13 +8,12 @@ const fadeIn = keyframes`
   to { opacity: 1; }
 `;
 
-
 const ResultContainer = styled(motion.div)`
   background: linear-gradient(135deg, #ffd3e3 0%, #fff0c1 100%);
   padding: 1rem;
   border-radius: 20px;
   box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
-  width: 1500px;
+  width: 100%;
   min-height: 100vh;
   animation: ${fadeIn} 1s ease-out;
   
@@ -25,19 +24,19 @@ const ResultContainer = styled(motion.div)`
 
 const Title = styled.h2`
   font-size: 1.5rem;
-  color: linear-gradient(45deg, #ff7675, #f7d794);
+  color: #ff7675;
   text-align: center;
   margin-bottom: 2rem;
   font-family: 'Arial', sans-serif;
   letter-spacing: 1px;
 
   @media (min-width: 768px) {
-    font-size: 3rem;
+    font-size: 2rem;
   }
 `;
 
 const CongratsTitle = styled(Title)`
-  color: linear-gradient(45deg, #ff7675, #f7d794);
+  color: #ff7675;
   font-size: 1.5rem;
   margin-top: 0.7rem;
 `;
@@ -119,13 +118,18 @@ const GameResult = ({ result, onPlayAgain }) => {
 
   useEffect(() => {
     setShowConfetti(true);
-    confetti({
-      particleCount: 100,
-      spread: 70,
-      angle: Math.random() * 60 + 40,
-      origin: { y: 0.6, x: Math.random() * 0.4 + 0.3 }
-    });
+    for (let i = 0; i < 5; i++) {
+      confetti({
+        particleCount: 150,
+        spread: 150,
+        angle: Math.random() * 60 + 40,
+        origin: { y: 0.6, x: Math.random() * 0.4 + 0.3 },
+      });
+    }
   }, []);
+
+  const totalReceivedBags = (result.receivedBags?.length || 0) + (result.unmatchedBags?.length || 0);
+  const allBags = [...(result.receivedBags || []), ...(result.unmatchedBags || [])];
 
   return (
     <ResultContainer
@@ -135,15 +139,13 @@ const GameResult = ({ result, onPlayAgain }) => {
     >
       <Title>Kết quả trò chơi</Title>
       <InfoText>Số túi ban đầu: {result.initialBags}</InfoText>
-      <InfoText>Màu nguyện vọng: <span style={{ color: result.desiredColor }}>{result.desiredColor}</span></InfoText>
-      <InfoText>Tổng số túi nhận được: {result.receivedBags ? result.receivedBags.length : 0}</InfoText>
-      <PlayAgainButton
-        onClick={onPlayAgain}
-        whileHover={{ scale: 1.05 }}
-        whileTap={{ scale: 0.95 }}
-      >
-        Chơi lại
-      </PlayAgainButton>
+      <InfoText>
+        Màu nguyện vọng: <span style={{ color: result.desiredColor }}>{result.desiredColor}</span>
+      </InfoText>
+      <InfoText>
+        Tổng số túi nhận được: {totalReceivedBags}
+      </InfoText>
+
       <AnimatePresence>
         {showConfetti && (
           <motion.div
@@ -152,31 +154,44 @@ const GameResult = ({ result, onPlayAgain }) => {
             exit={{ opacity: 0, scale: 0.5 }}
             transition={{ duration: 0.5 }}
           >
-            <CongratsTitle>Chúc mừng Bạn Đã Nhận Được:</CongratsTitle>
+            <CongratsTitle>Chúc mừng bạn đã nhận được:</CongratsTitle>
           </motion.div>
         )}
       </AnimatePresence>
 
-      <BagGrid>
-        {result.receivedBags && result.receivedBags.map((bag, index) => (
-          <BagItem
-            key={index}
-            initial={{ opacity: 0, scale: 0.8 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.5, delay: index * 0.1 }}
-          >
-            <BagImage
-              src={bag.image}
-              alt={bag.color}
-              onError={(e) => {
-                e.target.onerror = null;
-                e.target.src = 'path/to/fallback/image.png';
-              }}
-            />
-            <p style={{ color: bag.color, fontWeight: 'bold' }}>{bag.color}</p>
-          </BagItem>
-        ))}
-      </BagGrid>
+      {allBags.length > 0 && (
+        <>
+          <InfoText style={{ fontWeight: 'bold', marginTop: '1rem' }}>Tất cả các túi:</InfoText>
+          <BagGrid>
+            {allBags.map((bag, index) => (
+              <BagItem
+                key={`bag-${index}`}
+                initial={{ opacity: 0, scale: 0.8 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.5, delay: index * 0.1 }}
+              >
+                <BagImage
+                  src={bag.image}
+                  alt={bag.color}
+                  onError={(e) => {
+                    e.target.onerror = null;
+                    e.target.src = 'path/to/fallback/image.png';
+                  }}
+                />
+                <p style={{ color: bag.color, fontWeight: 'bold' }}>{bag.color}</p>
+              </BagItem>
+            ))}
+          </BagGrid>
+        </>
+      )}
+
+      <PlayAgainButton
+        onClick={onPlayAgain}
+        whileHover={{ scale: 1.05 }}
+        whileTap={{ scale: 0.95 }}
+      >
+        Chơi lại
+      </PlayAgainButton>
     </ResultContainer>
   );
 };
